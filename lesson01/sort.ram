@@ -1,0 +1,76 @@
+<input> 10 9 1 8 2 7 3 6 4 5 0
+
+; считываем количество
+read 0
+add =10
+store 1 ; конец массива
+; инициализируем счетчик
+load =10
+store 2 ; счетчик
+; считываем данные
+getdata:
+  read *2
+  load 2
+  add =1
+  store 2
+  sub 1
+  jz stop
+  jgtz stop
+  jmp getdata
+stop:
+
+; пишем код тут
+load 1
+sub =1
+store 3 ; последний индекс массива
+load =9
+store 4 ; начало массива -1
+
+loop_outer:
+  ; внешний и внутренний курсор в одну позицию, проверка на конец массива - выход
+  load 4
+  add =1
+  store 4
+  store 5 ; следующий элемент массива
+  sub 3
+  jz loop_exit
+
+  loop_inner:
+    ; внутренний курсор + 1, проверка на выход за массив
+    load 5
+    add =1
+    store 5
+    sub 3
+    jgtz loop_outer
+
+    ; сравнение чисел, правое > левого - менять не надо
+    load *5
+    sub *4
+    jz loop_inner
+    jgtz loop_inner
+    
+    ; замена чисел
+    load *5
+    store 6
+    load *4
+    store *5
+    load 6
+    store *4
+    jmp loop_inner
+
+loop_exit:
+
+load =10
+store 2 ; счетчик
+; выводим данные
+outdata:
+  write *2
+  load 2
+  add =1
+  store 2
+  sub 1
+  jz exit
+  jgtz exit
+  jmp outdata
+exit:
+halt
