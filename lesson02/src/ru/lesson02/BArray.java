@@ -41,9 +41,15 @@ class BArray<T> {
         _arr = tmp;
     }
 
+    void add(T element) {
+        add(_size, element);
+    }
+
     void add(int index, T element) {
         if (_arr == null || _arr.length <= index)
             relocate(index + _blockSize, index);
+        else if (_size % _blockSize == 0)
+            relocate(_size + _blockSize, index);
         if (_arr[index] != null) {
             for (int i = size() - 1; i >= index; i--) {
                 _arr[i + 1] = _arr[i];

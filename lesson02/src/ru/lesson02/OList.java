@@ -90,4 +90,15 @@ class OList<T> {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("(");
+        ListItem<T> item = head();
+        while (item != null) {
+            result.append(item.get()).append(", ");
+            item = item.getNext();
+        }
+        return result.delete(result.length() - 2, result.length()).append(")").toString();
+    }
 }

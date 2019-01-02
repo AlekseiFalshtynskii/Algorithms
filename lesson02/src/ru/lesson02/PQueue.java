@@ -4,30 +4,27 @@ import static java.lang.String.valueOf;
 
 public class PQueue<T> {
     private static final int BLOCK_SIZE = 5;
-    private OList<BArray<T>> _queues;
+    private BArray<OList<T>> _queues;
     private int _size;
+    private int _priorities;
 
     void enqueue(int priority, T item) {
         if (priority <= 0) {
             throw new IllegalArgumentException(valueOf(priority));
         }
         if (_queues == null) {
-            _queues = new OList<>();
+            _queues = new BArray<>(BLOCK_SIZE);
+        }
+        for (int i = _priorities; i < priority; i++) {
             _queues.add(null);
+            _priorities++;
         }
-        OList.ListItem queue = _queues.head();
-        int size = queue.get() == null ? 0 : ((BArray<T>) queue.get()).size();
-        for (int i = 1; i < priority; i++) {
-            if (queue.getNext() == null) {
-                _queues.add(null);
-            }
-            queue = queue.getNext();
-            size = queue.get() == null ? 0 : ((BArray<T>) queue.get()).size();
+        OList<T> queue = _queues.get(priority - 1);
+        if (queue == null) {
+            queue = new OList<>();
         }
-        if (queue.get() == null) {
-            queue.set(new BArray<T>(BLOCK_SIZE));
-        }
-        ((BArray<T>) queue.get()).add(size, item);
+        queue.add(item);
+        _queues.set(priority - 1, queue);
         _size++;
     }
 
@@ -35,16 +32,19 @@ public class PQueue<T> {
         if (_size == 0) {
             return null;
         }
-        OList.ListItem queue = _queues.head();
-        while (queue.getNext() != null && queue.get() == null) {
-            queue = queue.getNext();
-        }
-        T item = ((BArray<T>) queue.get()).remove(0);
-        if (((BArray<T>) queue.get()).size() == 0) {
-            queue.set(null);
+        T element = null;
+        for (int i = 0; i < _priorities; i++) {
+            if (_queues.get(i) != null) {
+                element = _queues.get(i).head().get();
+                _queues.get(i).remove(_queues.get(i).head());
+                if (_queues.get(i).head() == null) {
+                    _queues.set(i, null);
+                }
+                break;
+            }
         }
         _size--;
-        return item;
+        return element;
     }
 
     @Override
@@ -52,13 +52,6 @@ public class PQueue<T> {
         if (_queues == null) {
             return "";
         }
-        OList.ListItem queue = _queues.head();
-        int priority = 0;
-        StringBuilder result = new StringBuilder(valueOf(++priority)).append(": ").append(queue.get()).append("\n");
-        while(queue.getNext() != null) {
-            queue = queue.getNext();
-            result.append(++priority).append(": ").append(queue.get()).append("\n");
-        }
-        return result.toString();
+        return _queues.toString();
     }
 }
