@@ -54,7 +54,7 @@ class OList<T> {
         return _head;
     }
 
-    void add(T item) {
+    ListItem<T> add(T item) {
         ListItem<T> li = new ListItem<>(item);
         if (_head == null) {
             _head = li;
@@ -63,22 +63,26 @@ class OList<T> {
             _tail.setNext(li);
             _tail = li;
         }
+        return li;
     }
 
-    void add(ListItem<T> listItem, T item) {
-        if (listItem == _tail) {
-            add(item);
-        } else {
-            ListItem<T> next = listItem.getNext();
-            ListItem<T> li = new ListItem<>(item);
-            listItem.setNext(li);
-            li.setNext(next);
+    ListItem<T> add(ListItem<T> listItem, T item) {
+        if (listItem == null || listItem == _tail) {
+            return add(item);
         }
+        ListItem<T> next = listItem.getNext();
+        ListItem<T> li = new ListItem<>(item);
+        listItem.setNext(li);
+        li.setNext(next);
+        return li;
     }
 
     void remove(ListItem<T> listItem) {
         if (listItem == _head) {
             _head = listItem.getNext();
+            if (_head == null) {
+                _tail = null;
+            }
         } else {
             ListItem<T> block = _head;
             while (block.getNext() != listItem) {

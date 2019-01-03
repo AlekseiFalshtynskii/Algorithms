@@ -32,6 +32,19 @@ public class IArray<T> {
                 blockSize = ((BArray<T>) block.get()).size();
                 sumSize += blockSize;
             }
+            if (index == _size && blockSize == _blockSize) {
+                block = addBlock();
+                blockSize = 0;
+            } else if (index != 0 && index % _blockSize == 0) {
+                block = block.getNext();
+                blockSize = ((BArray<T>) block.get()).size();
+                sumSize += blockSize;
+            }
+
+            if (blockSize == _blockSize) {
+                OList.ListItem newBlock = addBlock(block);
+                copyPartBlock((BArray<T>) block.get(), (BArray<T>)newBlock.get(), index - (sumSize - blockSize));
+            }
             addToBlock(block, index - (sumSize - blockSize), element);
         }
     }
@@ -39,22 +52,26 @@ public class IArray<T> {
     private void addToBlock(OList.ListItem block, int index, T element) {
         BArray<T> bArray = (BArray<T>) block.get();
         bArray.add(index, element);
-        if (bArray.size() == _blockSize) {
-            addBlock(block);
-        }
         _size++;
     }
 
-    private void addBlock(OList.ListItem item) {
-        BArray<T> prevBlock = (BArray<T>) item.get();
+    private OList.ListItem addBlock() {
+        return addBlock(null);
+    }
+
+    private OList.ListItem addBlock(OList.ListItem item) {
         BArray<T> newBlock = new BArray<>(_blockSize);
+        return _arrs.add(item, newBlock);
+    }
+
+    private void copyPartBlock(BArray<T> from, BArray<T> to, int index) {
+        int fromIndex = index > _blockSize / 2 ? index : _blockSize / 2;
         int j = 0;
-        for (int i = (_blockSize / 2); i < _blockSize; i++) {
-            newBlock.add(j++, prevBlock.get(i));
-            prevBlock.set(i, null);
-            prevBlock.incSize();
+        for (int i = fromIndex; i < _blockSize; i++) {
+            to.add(j++, from.get(i));
+            from.set(i, null);
+            from.incSize();
         }
-        _arrs.add(item, newBlock);
     }
 
     T get(int index) {
@@ -94,12 +111,12 @@ public class IArray<T> {
 
     @Override
     public String toString() {
-        if (_arrs == null) {
+        if (_arrs == null || _arrs.head() == null) {
             return "null";
         }
         OList.ListItem item = _arrs.head();
         StringBuilder result = new StringBuilder(valueOf(item.get())).append(",\n");
-        while(item.getNext() != null) {
+        while (item.getNext() != null) {
             item = item.getNext();
             result.append(item.get()).append(",\n");
         }

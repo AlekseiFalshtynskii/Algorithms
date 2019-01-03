@@ -61,9 +61,10 @@ class BArray<T> {
 
     T remove(int index) {
         T o = (T) _arr[index];
-        for (int i = index; i <= size() - 1; i++) {
+        for (int i = index; i <= size() - 2; i++) {
             _arr[i] = _arr[i + 1];
         }
+        _arr[size() - 1] = null;
         _size--;
         return o;
     }
