@@ -41,12 +41,12 @@ public class SieveOfEratosthenes {
      */
     private static void memorySaving() {
         byte[] bytes = new byte[N / 8 + 1];
-        for (int i = 3; i < N; i = i + 2) {
-            if (i * i >= N) {
+        for (int i = 3; i <= N; i = i + 2) {
+            if (i * i > N) {
                 break;
             }
             if (getBit(bytes, i) == 0) {
-                for (int j = i * i; j < N; j = j + i) {
+                for (int j = i * i; j <= N; j = j + i) {
                     if (j % 2 == 0) {
                         continue;
                     }
