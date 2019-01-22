@@ -1,0 +1,19 @@
+Benchmark                                             (type)  Mode  Cnt  Score    Error  Units
+BenchmarkInsertionSortTest.insertionSortTest         ordered  avgt    5  0.005 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest  almost ordered  avgt    5  0.005 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest        reversed  avgt    5  0.021 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest          random  avgt    5  0.038 ±  0.024  ms/op
+
+Benchmark                             (k)          (type)  Mode  Cnt  Score    Error  Units
+BenchmarkShellSortTest.shellSortTest    2         ordered  avgt    5  0.179 ±  0.008  ms/op
+BenchmarkShellSortTest.shellSortTest    2  almost ordered  avgt    5  0.279 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    2        reversed  avgt    5  0.421 ±  0.002  ms/op
+BenchmarkShellSortTest.shellSortTest    2          random  avgt    5  0.396 ±  0.002  ms/op
+BenchmarkShellSortTest.shellSortTest    3         ordered  avgt    5  0.102 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    3  almost ordered  avgt    5  0.172 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    3        reversed  avgt    5  0.249 ±  0.003  ms/op
+BenchmarkShellSortTest.shellSortTest    3          random  avgt    5  0.246 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    4         ordered  avgt    5  0.075 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    4  almost ordered  avgt    5  0.129 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    4        reversed  avgt    5  0.183 ±  0.001  ms/op
+BenchmarkShellSortTest.shellSortTest    4          random  avgt    5  0.188 ±  0.013  ms/op
