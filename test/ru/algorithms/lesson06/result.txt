@@ -1,0 +1,3 @@
+Benchmark                                 (randomize)  Mode  Cnt   Score   Error  Units
+BenchmarkQuickSortTest.insertionSortTest        false  avgt    5  62.123 ± 3.529  ms/op
+BenchmarkQuickSortTest.insertionSortTest         true  avgt    5   0.931 ± 0.004  ms/op
