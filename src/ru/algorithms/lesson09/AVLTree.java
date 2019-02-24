@@ -6,16 +6,15 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static joptsimple.internal.Strings.repeat;
 
-public class AVLTree {
+public class AVLTree<Key extends Comparable<Key>> {
 
     private class Node {
         private int height;
-        private Integer key, value;
+        private Key key;
         private Node left, right;
 
-        Node(Integer key, Integer value) {
+        Node(Key key) {
             this.key = key;
-            this.value = value;
             this.left = this.right = null;
             this.height = 1;
         }
@@ -23,23 +22,21 @@ public class AVLTree {
 
     private Node root;
 
-    void insert(Integer key, Integer value) {
-        root = insert(root, key, value);
+    void insert(Key key) {
+        root = insert(root, key);
     }
 
-    private Node insert(Node node, Integer key, Integer value) {
+    private Node insert(Node node, Key key) {
         if (node == null) {
-            return new Node(key, value);
+            return new Node(key);
         }
         int compareResult = key.compareTo(node.key);
         if (compareResult < 0) {
-            node.left = insert(node.left, key, value);
+            node.left = insert(node.left, key);
             node.height = fixHeight(node);
         } else if (compareResult > 0) {
-            node.right = insert(node.right, key, value);
+            node.right = insert(node.right, key);
             node.height = fixHeight(node);
-        } else {
-            node.value = value;
         }
         node = reBalance(node);
         return node;
@@ -103,11 +100,11 @@ public class AVLTree {
         return node;
     }
 
-    void remove(Integer key) {
+    void remove(Key key) {
         root = remove(root, key);
     }
 
-    private Node remove(Node node, Integer key) {
+    private Node remove(Node node, Key key) {
         if (node == null) {
             return null;
         }
@@ -130,7 +127,6 @@ public class AVLTree {
                 } else {
                     Node res = min(node.right);
                     node.key = res.key;
-                    node.value = res.value;
                     remove(node.right, node.key);
                 }
             }
