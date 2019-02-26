@@ -1,0 +1,22 @@
+Benchmark                           (test)    (type)  Mode  Cnt     Score     Error  Units
+TreeInsertTest.insertTest   random       avl  avgt    5  5864.499 ± 594.599  ms/op
+TreeInsertTest.insertTest   random  redblack  avgt    5  4668.486 ± 808.599  ms/op
+TreeInsertTest.insertTest    order       avl  avgt    5  1159.800 ±  85.118  ms/op
+TreeInsertTest.insertTest    order  redblack  avgt    5  1743.996 ± 240.258  ms/op
+TreeInsertTest.insertTest  dataset       avl  avgt    5   515.540 ±  84.556  ms/op
+TreeInsertTest.insertTest  dataset  redblack  avgt    5   499.069 ±  60.892  ms/op
+
+Benchmark                           (test)    (type)  Mode  Cnt     Score      Error  Units
+TreeSearchTest.searchTest   random       avl  avgt    5  5587.628 ± 1275.994  ms/op
+TreeSearchTest.searchTest   random  redblack  avgt    5  6064.283 ±  849.097  ms/op
+TreeSearchTest.searchTest    order       avl  avgt    5   322.897 ±   44.870  ms/op
+TreeSearchTest.searchTest    order  redblack  avgt    5   697.176 ±   42.755  ms/op
+TreeSearchTest.searchTest  dataset       avl  avgt    5  2660.272 ±   37.934  ms/op
+TreeSearchTest.searchTest  dataset  redblack  avgt    5  2665.240 ±  136.468  ms/op
+
+Benchmark                            (type)  Mode  Cnt     Score     Error  Units
+TreeRemoveTest.removeTest       avl  avgt    5  1427.244 ± 496.901  ms/op
+TreeRemoveTest.removeTest  redblack  avgt    5  1251.927 ± 207.871  ms/op
+
+TreeHeightTest       avl  27
+TreeHeightTest  redblack  27

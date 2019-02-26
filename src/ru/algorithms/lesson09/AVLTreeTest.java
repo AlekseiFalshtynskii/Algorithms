@@ -11,14 +11,12 @@ public class AVLTreeTest {
     public static void main(String[] args) {
         List<Integer> keys = new ArrayList<>(SIZE);
         int key;
-        int value;
         AVLTree<Integer> tree = new AVLTree();
         for (int i = 0; i < SIZE; i++) {
             key = current().nextInt(10, 99);
-            value = current().nextInt(10, 99);
             keys.add(key);
             tree.insert(key);
-            System.out.println("Inserted key: " + key + ", value: " + value);
+            System.out.println("Inserted key: " + key);
             tree.print();
         }
         key = keys.get(current().nextInt(keys.size()));

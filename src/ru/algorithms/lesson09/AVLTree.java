@@ -22,7 +22,7 @@ public class AVLTree<Key extends Comparable<Key>> {
 
     private Node root;
 
-    void insert(Key key) {
+    public void insert(Key key) {
         root = insert(root, key);
     }
 
@@ -100,7 +100,7 @@ public class AVLTree<Key extends Comparable<Key>> {
         return node;
     }
 
-    void remove(Key key) {
+    public void remove(Key key) {
         root = remove(root, key);
     }
 
@@ -142,13 +142,27 @@ public class AVLTree<Key extends Comparable<Key>> {
         return node.left == null ? node : min(node.left);
     }
 
+    public Node search(Key key) {
+        return search(key, root);
+    }
+
+    private Node search(Key key, Node node) {
+        if (node == null || key.compareTo(node.key) == 0) {
+            return node;
+        }
+        if (key.compareTo(node.key) < 0) {
+            return search(key, node.left);
+        }
+        return search(key, node.right);
+    }
+
     void print() {
         int maxHeight = maxHeight();
         printHeight(singletonList(root), 1, maxHeight, 7);
         System.out.println();
     }
 
-    private int maxHeight() {
+    public int maxHeight() {
         return maxHeight(root);
     }
 
