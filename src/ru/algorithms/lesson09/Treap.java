@@ -11,19 +11,18 @@ import static joptsimple.internal.Strings.repeat;
 public class Treap {
 
     class Node {
-        private int key, priority, value;
+        private int key, priority;
         private Node left, right;
 
-        Node(int key, int priority, int value) {
+        Node(int key, int priority) {
             this.key = key;
             this.priority = priority;
-            this.value = value;
         }
     }
 
     private Node root;
 
-    void insert(int key, int priority, int value) {
+    public void insert(int key, int priority) {
         Node temp = root;
         while (temp != null && temp.key != key) {
             if (key < temp.key) {
@@ -33,7 +32,7 @@ public class Treap {
             }
         }
         if (temp == null) {
-            Node m = new Node(key, priority, value);
+            Node m = new Node(key, priority);
             Pair<Node, Node> p = split(root, key);
             root = merge(p.fst, merge(m, p.snd));
         }

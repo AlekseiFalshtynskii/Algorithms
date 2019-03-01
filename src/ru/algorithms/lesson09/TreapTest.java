@@ -12,15 +12,13 @@ public class TreapTest {
         List<Integer> keys = new ArrayList<>(SIZE);
         int key;
         int priority;
-        int value;
         Treap treap = new Treap();
         for (int i = 0; i < SIZE; i++) {
             key = current().nextInt(10, 99);
             priority = current().nextInt(10, 99);
-            value = current().nextInt(10, 99);
             keys.add(key);
-            treap.insert(key, priority, value);
-            System.out.println("Inserted key: " + key + ", priority: " + priority + ", value: " + value);
+            treap.insert(key, priority);
+            System.out.println("Inserted key: " + key + ", priority: " + priority);
             treap.print();
         }
         key = keys.get(current().nextInt(keys.size()));

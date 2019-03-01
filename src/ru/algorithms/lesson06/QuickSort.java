@@ -1,6 +1,7 @@
 package ru.algorithms.lesson06;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
@@ -8,28 +9,41 @@ public class QuickSort {
     private static final int SIZE = 100;
 
     public static void main(String[] args) {
-        int[] arr = current().ints(SIZE, 10, 99).toArray();
+        Integer[] arr = current().ints(SIZE, 10, 99).boxed().toArray(Integer[]::new);
         quickSort(arr, false);
         System.out.println(Arrays.toString(arr));
     }
 
-    public static void quickSort(int[] arr, boolean withRandomize) {
-        quickSort(arr, 0, arr.length - 1, withRandomize);
+    public static <T extends Comparable<T>> void quickSort(T[] arr) {
+        quickSort(arr, 0, arr.length - 1, false, null);
     }
 
-    static void quickSort(int[] arr, int begin, int end, boolean withRandomize) {
+    public static <T extends Comparable<T>> void quickSort(T[] arr, boolean withRandomize) {
+        quickSort(arr, 0, arr.length - 1, withRandomize, null);
+    }
+
+    public static <T extends Comparable<T>> void quickSort(T[] arr, Comparator<T> comparator) {
+        quickSort(arr, 0, arr.length - 1, false, comparator);
+    }
+
+    static <T extends Comparable<T>> void quickSort(T[] arr, int begin, int end, boolean withRandomize, Comparator<T> comparator) {
         if (begin < end) {
-            int pivot = partition(arr, begin, end, withRandomize);
-            quickSort(arr, begin, pivot - 1, withRandomize);
-            quickSort(arr, pivot + 1, end, withRandomize);
+            int pivot = partition(arr, begin, end, withRandomize, comparator);
+            quickSort(arr, begin, pivot - 1, withRandomize, comparator);
+            quickSort(arr, pivot + 1, end, withRandomize, comparator);
         }
     }
 
-    static int partition(int[] arr, int begin, int end, boolean withRandomize) {
-        int pivot = arr[withRandomize ? current().nextInt(begin, end) : end];
+    static <T extends Comparable<T>> int partition(T[] arr, int begin, int end, boolean withRandomize, Comparator<T> comparator) {
+        T pivot = arr[withRandomize ? current().nextInt(begin, end) : end];
         int i = begin - 1;
         for (int j = begin; j < end; j++) {
-            if (arr[j] <= pivot) {
+            if (comparator != null) {
+                if (comparator.compare(arr[j], pivot) <= 0) {
+                    i++;
+                    swap(arr, i, j);
+                }
+            } else if (arr[j].compareTo(pivot) <= 0) {
                 i++;
                 swap(arr, i, j);
             }
@@ -38,8 +52,8 @@ public class QuickSort {
         return i + 1;
     }
 
-    static void swap(int[] arr, int i, int j) {
-        int t = arr[i];
+    static <T extends Comparable<T>> void swap(T[] arr, int i, int j) {
+        T t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;
     }

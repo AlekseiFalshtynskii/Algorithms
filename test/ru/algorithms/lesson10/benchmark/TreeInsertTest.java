@@ -8,7 +8,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import ru.algorithms.lesson09.AVLTree;
 import ru.algorithms.lesson10.RedBlackTree;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +18,7 @@ import static ru.algorithms.lesson10.benchmark.DatasetImport.parseFile;
 @OutputTimeUnit(value = TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class TreeInsertTest {
+    private static final String DATA_SET = "test/ru/algorithms/lesson10/benchmark/wiki.train.tokens";
 
     private static final int SIZE = 5_000_000;
 
@@ -33,7 +33,7 @@ public class TreeInsertTest {
     @Setup(Level.Trial)
     public void initArray() {
         if ("dataset".equals(test)) {
-            words = parseFile(new File("test/ru/algorithms/lesson10/benchmark/wiki.train.tokens").getAbsolutePath());
+            words = parseFile(DATA_SET);
         }
     }
 

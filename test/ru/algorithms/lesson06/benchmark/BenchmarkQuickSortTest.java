@@ -21,11 +21,11 @@ public class BenchmarkQuickSortTest {
     @Param({"false", "true"})
     private boolean randomize;
 
-    private int[] arr = new int[SIZE];
+    private Integer[] arr;
 
     @Setup(Level.Trial)
     public void initArray() {
-        arr = current().ints(SIZE, 10, 99).toArray();
+        arr = current().ints(SIZE, 10, 99).boxed().toArray(Integer[]::new);
     }
 
     @Benchmark
