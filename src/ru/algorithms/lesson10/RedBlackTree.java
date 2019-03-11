@@ -18,6 +18,11 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node(Key key) {
             this.key = key;
         }
+
+        @Override
+        public String toString() {
+            return key + ":" + (color == BLACK ? "B" : "R");
+        }
     }
 
     private Node root;
@@ -28,141 +33,72 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param key
      */
     public void insert(Key key) {
-        Node node = new Node(key);
+        Node newNode = new Node(key);
         if (root == null) {
-            root = node;
+            root = newNode;
         } else {
             Node temp = root;
+            Node node = null;
 
             /* Ищем узел, к которому присоединить новый */
-            while (true) {
+            while (temp != null) {
+                node = temp;
                 if (key.compareTo(temp.key) < 0) {
-                    if (temp.left == null) {
-                        break;
-                    }
                     temp = temp.left;
                 } else if (key.compareTo(temp.key) > 0) {
-                    if (temp.right == null) {
-                        break;
-                    }
                     temp = temp.right;
                 } else {
                     return;
                 }
             }
-            if (key.compareTo(temp.key) < 0) {
-                temp.left = node;
+            newNode.parent = node;
+            if (key.compareTo(node.key) < 0) {
+                node.left = newNode;
             } else {
-                temp.right = node;
+                node.right = newNode;
             }
-            node.parent = temp;
         }
-        insertCase1(node);
+        insertFixUp(newNode);
     }
 
-    /**
-     * Текущий узел - корень, только перекрашивание в черный
-     *
-     * @param node
-     */
-    private void insertCase1(Node node) {
-        if (node.parent == null) {
-            node.color = BLACK;
-        } else {
-            insertCase2(node);
-        }
-    }
-
-    /**
-     * Предок - черный, свойства не нарушаются
-     *
-     * @param node
-     */
-    private void insertCase2(Node node) {
-        if (node.parent.color == BLACK) {
-            return;
-        }
-        insertCase3(node);
-    }
-
-    /**
-     * Родителья и дядя - красные, перекрашиваем в черный, деда в красный
-     *
-     * @param node
-     */
-    private void insertCase3(Node node) {
-        Node uncle = getUncle(node);
-        if (uncle != null && uncle.color == RED) {
-            node.parent.color = uncle.color = BLACK;
+    private void insertFixUp(Node node) {
+        while (node != null && node != root && node.parent.color != BLACK) {
             Node grandParent = getGrandParent(node);
-            grandParent.color = RED;
-            insertCase1(grandParent);
-        } else {
-            insertCase4(node);
+            if (isLeft(node.parent)) {
+                Node right = grandParent.right;
+                if (right != null && right.color == RED) {
+                    node.parent.color = BLACK;
+                    right.color = BLACK;
+                    grandParent.color = RED;
+                    node = grandParent;
+                } else {
+                    if (isRight(node)) {
+                        node = node.parent;
+                        rotateLeft(node);
+                    }
+                    node.parent.color = BLACK;
+                    grandParent.color = RED;
+                    rotateRight(grandParent);
+                }
+            } else {
+                Node left = grandParent.left;
+                if (left != null && left.color == RED) {
+                    node.parent.color = BLACK;
+                    left.color = BLACK;
+                    grandParent.color = RED;
+                    node = grandParent;
+                } else {
+                    if (isLeft(node)) {
+                        node = node.parent;
+                        rotateRight(node);
+                    }
+                    node.parent.color = BLACK;
+                    grandParent.color = RED;
+                    rotateLeft(grandParent);
+                }
+            }
         }
-    }
-
-    /**
-     * Родитель и дядя разных цветов - соответственно поворот налево, если узел правый потомок и направо, если левый
-     *
-     * @param node
-     */
-    private void insertCase4(Node node) {
-        Node grandParent = getGrandParent(node);
-        if (isRight(node) && node.parent == grandParent.left) {
-            rotateLeft(node.parent);
-            node = node.left;
-        } else if (isLeft(node) && node.parent == grandParent.right) {
-            rotateRight(node.parent);
-            node = node.right;
-        }
-        insertCase5(node);
-    }
-
-    /**
-     * Родитель красный, дядя черный, текущий узел - левый потомок и родитель - левый потомок, тогда поворот направо относительно деда
-     *
-     * @param node
-     */
-    private void insertCase5(Node node) {
-        Node grandParent = getGrandParent(node);
-        node.parent.color = BLACK;
-        grandParent.color = RED;
-        if (node == node.parent.left && node.parent == grandParent.left) {
-            rotateRight(grandParent);
-        } else {
-            rotateLeft(grandParent);
-        }
-    }
-
-    /**
-     * Получение деда
-     *
-     * @param node
-     * @return
-     */
-    private Node getGrandParent(Node node) {
-        if (node != null && node.parent != null) {
-            return node.parent.parent;
-        }
-        return null;
-    }
-
-    /**
-     * Получение дяди
-     *
-     * @param node
-     * @return
-     */
-    private Node getUncle(Node node) {
-        Node grandParent = getGrandParent(node);
-        if (grandParent == null) {
-            return null;
-        }
-        if (node.parent == grandParent.left) {
-            return grandParent.right;
-        }
-        return grandParent.left;
+        root.color = BLACK;
     }
 
     /**
@@ -171,24 +107,26 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param node
      */
     private void rotateLeft(Node node) {
-        Node pivot = node.right;
-        if (node.parent == null) {
-            root = pivot;
-        }
-        pivot.parent = node.parent;
-        if (node.parent != null) {
-            if (isLeft(node)) {
-                node.parent.left = pivot;
-            } else {
-                node.parent.right = pivot;
+        if (node != null) {
+            Node pivot = node.right;
+            if (node.parent == null) {
+                root = pivot;
             }
+            pivot.parent = node.parent;
+            if (node.parent != null) {
+                if (isLeft(node)) {
+                    node.parent.left = pivot;
+                } else {
+                    node.parent.right = pivot;
+                }
+            }
+            node.right = pivot.left;
+            if (pivot.left != null) {
+                pivot.left.parent = node;
+            }
+            node.parent = pivot;
+            pivot.left = node;
         }
-        node.right = pivot.left;
-        if (pivot.left != null) {
-            pivot.left.parent = node;
-        }
-        node.parent = pivot;
-        pivot.left = node;
     }
 
     /**
@@ -197,24 +135,26 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param node
      */
     private void rotateRight(Node node) {
-        Node pivot = node.left;
-        if (node.parent == null) {
-            root = pivot;
-        }
-        pivot.parent = node.parent;
-        if (node.parent != null) {
-            if (isLeft(node)) {
-                node.parent.left = pivot;
-            } else {
-                node.parent.right = pivot;
+        if (node != null) {
+            Node pivot = node.left;
+            if (node.parent == null) {
+                root = pivot;
             }
+            pivot.parent = node.parent;
+            if (node.parent != null) {
+                if (isLeft(node)) {
+                    node.parent.left = pivot;
+                } else {
+                    node.parent.right = pivot;
+                }
+            }
+            node.left = pivot.right;
+            if (pivot.right != null) {
+                pivot.right.parent = node;
+            }
+            node.parent = pivot;
+            pivot.right = node;
         }
-        node.left = pivot.right;
-        if (pivot.right != null) {
-            pivot.right.parent = node;
-        }
-        node.parent = pivot;
-        pivot.right = node;
     }
 
     private boolean isLeft(Node node) {
@@ -238,179 +178,131 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         if (node == null) {
             return;
         }
-        if (node.left == null && node.right == null) {
-            if (node.parent == null) {
-                root = null;
-            } else if (isLeft(node)) {
+        if (node.right != null && node.left != null) {
+            Node max = searchMax(node.left);
+            node.key = max.key;
+            node = max;
+        }
+        Node replacedNode = node.left != null ? node.left : node.right;
+        if (replacedNode != null) {
+            replaceNode(node, replacedNode);
+            node.left = node.right = node.parent = null;
+            if (node.color == BLACK) {
+                removeFixUp(replacedNode);
+            }
+        } else if (node.parent == null) {
+            root = null;
+        } else {
+            if (node.color == BLACK) {
+                removeFixUp(node);
+            }
+            if (isLeft(node)) {
                 node.parent.left = null;
             } else {
                 node.parent.right = null;
             }
-        } else if (node.left == null || node.right == null) {
-            Node child = node.right == null ? node.left : node.right;
-            removeOneChild(node, child);
-        } else {
-            Node child = searchMax(node.left);
-            removeOneChild(node, child);
+            node.parent = null;
         }
     }
 
-    /**
-     * Удаление узла с не более одним потомком
-     *
-     * @param node
-     * @param child
-     */
-    private void removeOneChild(Node node, Node child) {
-        replaceNode(node, child);
-        if (node.color == BLACK) {
-            if (child.color == RED) {
-                child.color = BLACK;
-            } else {
-                deleteCase1(child);
-            }
-        }
-    }
-
-    /**
-     * Если текущий узел - новый корень - ничего не делать
-     *
-     * @param node
-     */
-    private void deleteCase1(Node node) {
-        if (node.parent != null) {
-            deleteCase2(node);
-        }
-    }
-
-    /**
-     * Брат — красный, меняем цвета родителя и брата и делаем поворот относительно узла
-     *
-     * @param node
-     */
-    private void deleteCase2(Node node) {
-        Node sibling = getSibling(node);
-        if (sibling.color == RED) {
-            node.parent.color = RED;
-            sibling.color = BLACK;
+    private void removeFixUp(Node node) {
+        while (node != root && getColor(node) == BLACK) {
             if (isLeft(node)) {
-                rotateLeft(node.parent);
+                Node sibling = getRight(getParent(node));
+                if (getColor(sibling) == RED) {
+                    setColor(sibling, BLACK);
+                    setColor(getParent(node), RED);
+                    rotateLeft(getParent(node));
+                    sibling = getRight(getParent(node));
+                }
+                if (getColor(getLeft(sibling)) == BLACK && getColor(getRight(sibling))== BLACK) {
+                    setColor(getLeft(sibling), RED);
+                    node = getParent(node);
+                    continue;
+                } else if (getColor(getRight(sibling)) == BLACK) {
+                    setColor(getLeft(sibling), BLACK);
+                    setColor(sibling, RED);
+                    rotateRight(sibling);
+                    sibling = getRight(getParent(node));
+                }
+                if (getColor(getRight(sibling)) == RED) {
+                    setColor(sibling, getColor(getParent(node)));
+                    setColor(getParent(node), BLACK);
+                    setColor(getRight(sibling), BLACK);
+                    rotateLeft(getParent(node));
+                    node = root;
+                }
             } else {
-                rotateRight(node.parent);
+                Node sibling = getLeft(getParent(node));
+                if (getColor(sibling) == RED) {
+                    setColor(sibling, BLACK);
+                    setColor(getParent(node), RED);
+                    rotateRight(getParent(node));
+                    sibling = getLeft(getParent(node));
+                }
+                if (getColor(getRight(sibling)) == BLACK && getColor(getLeft(sibling)) == BLACK) {
+                    setColor(sibling, RED);
+                    node = getParent(node);
+                    continue;
+                } else if (getColor(getLeft(sibling)) == BLACK) {
+                    setColor(getRight(sibling), BLACK);
+                    setColor(sibling, RED);
+                    rotateLeft(sibling);
+                    sibling = getLeft(getParent(node));
+                }
+                if (getColor(getLeft(sibling)) == RED) {
+                    setColor(sibling, getColor(getParent(node)));
+                    setColor(getParent(node), BLACK);
+                    setColor(getLeft(sibling), BLACK);
+                    rotateRight(getParent(node));
+                    node = root;
+                }
             }
         }
-        deleteCase3(node);
+        setColor(node, BLACK);
     }
 
-    /**
-     * Родитель, брат и потомки брата - черные - перекрашиваем брата в красный
-     *
-     * @param node
-     */
-    private void deleteCase3(Node node) {
-        Node sibling = getSibling(node);
-        if (node.parent.color == BLACK
-                && sibling.color == BLACK
-                && sibling.left.color == BLACK
-                && sibling.right.color == BLACK) {
-            sibling.color = RED;
-            deleteCase1(node.parent);
-        } else {
-            deleteCase4(node);
+    private boolean getColor(Node node) {
+        return node == null ? BLACK : node.color;
+    }
+
+    private void setColor(Node node, boolean color) {
+        if (node != null) {
+            node.color = color;
         }
     }
 
-    /**
-     * Брат и его дети ёрные, но родитель красный - просто меняем цвета родителя и брата
-     *
-     * @param node
-     */
-    private void deleteCase4(Node node) {
-        Node sibling = getSibling(node);
-        if (node.parent.color == RED
-                && sibling.color == BLACK
-                && sibling.left.color == BLACK
-                && sibling.right.color == BLACK) {
-            sibling.color = RED;
-            node.parent.color = BLACK;
-        } else {
-            deleteCase5(node);
-        }
+    private Node getParent(Node node) {
+        return node == null ? null : node.parent;
     }
 
-    /**
-     * Брат — чёрный, левый потомок брата — красный, правый потомок брата — чёрный
-     * Вращаем дерево направо вокруг брата если узел - левый потомок и налево - если правый
-     *
-     * @param node
-     */
-    private void deleteCase5(Node node) {
-        Node sibling = getSibling(node);
-        if (sibling.color == BLACK) {
-            if (isLeft(node)
-                    && sibling.right.color == BLACK
-                    && sibling.left.color == RED) {
-                sibling.color = RED;
-                sibling.left.color = BLACK;
-                rotateRight(sibling);
-            } else if (isRight(node)
-                    && sibling.left.color == BLACK
-                    && sibling.right.color == RED) {
-                sibling.color = RED;
-                sibling.right.color = BLACK;
-                rotateLeft(sibling);
-            }
-        }
-        deleteCase6(node);
+    private Node getGrandParent(Node node) {
+        return getParent(getParent(node));
     }
 
-    /**
-     * Брат — чёрный, правый потомок брата — красный, вращаем дерево налево вокруг родителя, если узел левый потомк и направо, если правый
-     *
-     * @param node
-     */
-    private void deleteCase6(Node node) {
-        Node sibling = getSibling(node);
-        sibling.color = node.parent.color;
-        node.parent.color = BLACK;
-        if (isLeft(node)) {
-            sibling.right.color = BLACK;
-            rotateLeft(node.parent);
-        } else {
-            sibling.left.color = BLACK;
-            rotateRight(node.parent);
-        }
+    private Node getLeft(Node node) {
+        return node == null ? null : node.left;
+    }
+
+    private Node getRight(Node node) {
+        return node == null ? null : node.right;
     }
 
     /**
      * Смена узлов местами
      *
-     * @param node
-     * @param child
+     * @param target
+     * @param with
      */
-    private void replaceNode(Node node, Node child) {
-        if (node.parent == null) {
-            root = child;
-        } else if (isLeft(node)) {
-            node.parent.left = child;
+    private void replaceNode(Node target, Node with) {
+        if (target.parent == null) {
+            root = with;
+        } else if (isLeft(target)) {
+            target.parent.left = with;
         } else {
-            node.parent.right = child;
+            target.parent.right = with;
         }
-        child.parent = node.parent;
-        child.right = node.right;
-    }
-
-    /**
-     * Получение брата
-     *
-     * @param node
-     * @return
-     */
-    private Node getSibling(Node node) {
-        if (isLeft(node)) {
-            return node.parent.right;
-        }
-        return node.parent.left;
+        with.parent = target.parent;
     }
 
     /**
@@ -440,10 +332,10 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @return
      */
     private Node searchMax(Node node) {
-        if (node.right == null) {
-            return node;
+        while (node.right != null) {
+            node = node.right;
         }
-        return searchMax(node.right);
+        return node;
     }
 
     void print() {
