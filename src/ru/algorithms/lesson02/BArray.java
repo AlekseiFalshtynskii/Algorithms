@@ -15,17 +15,19 @@ package ru.algorithms.lesson02;
 
 import java.util.Arrays;
 
-class BArray<T> {
+import static java.util.Arrays.asList;
+
+public class BArray<T> {
     private Object[] _arr;
     private int _blockSize;
     private int _size = 0;
 
-    BArray(int blockSize) {
+    public BArray(int blockSize) {
         _blockSize = blockSize;
     }
 
     @SuppressWarnings("unchecked")
-    T get(int index) {
+    public T get(int index) {
         return (T) _arr[index];
     }
 
@@ -41,11 +43,11 @@ class BArray<T> {
         _arr = tmp;
     }
 
-    void add(T element) {
+    public void add(T element) {
         add(_size, element);
     }
 
-    void add(int index, T element) {
+    public void add(int index, T element) {
         if (_arr == null || _arr.length <= index)
             relocate(index + _blockSize, index);
         else if (_size % _blockSize == 0)
@@ -59,7 +61,7 @@ class BArray<T> {
         _size++;
     }
 
-    T remove(int index) {
+    public T remove(int index) {
         T o = (T) _arr[index];
         for (int i = index; i <= size() - 2; i++) {
             _arr[i] = _arr[i + 1];
@@ -69,7 +71,7 @@ class BArray<T> {
         return o;
     }
 
-    void set(int index, T element) {
+    public void set(int index, T element) {
         _arr[index] = element;
     }
 
@@ -77,8 +79,12 @@ class BArray<T> {
         _size--;
     }
 
-    int size() {
+    public int size() {
         return _size;
+    }
+
+    public <T> T[] toArray(T[] a) {
+        return asList(_arr).toArray(a);
     }
 
     @Override
