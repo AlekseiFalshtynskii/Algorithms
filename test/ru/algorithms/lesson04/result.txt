@@ -1,8 +1,24 @@
-Benchmark                                             (type)  Mode  Cnt  Score    Error  Units
-BenchmarkInsertionSortTest.insertionSortTest         ordered  avgt    5  0.005 ±  0.001  ms/op
-BenchmarkInsertionSortTest.insertionSortTest  almost ordered  avgt    5  0.005 ±  0.001  ms/op
-BenchmarkInsertionSortTest.insertionSortTest        reversed  avgt    5  0.021 ±  0.001  ms/op
-BenchmarkInsertionSortTest.insertionSortTest          random  avgt    5  0.038 ±  0.024  ms/op
+Benchmark                                     (size)          (type)  Mode  Cnt  Score    Error  Units
+BenchmarkInsertionSortTest.insertionSortTest    1000         ordered  avgt    5  0.001 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    1000  almost ordered  avgt    5  0.001 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    1000        reversed  avgt    5  0.002 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    1000          random  avgt    5  0.002 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    5000         ordered  avgt    5  0.003 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    5000  almost ordered  avgt    5  0.003 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    5000        reversed  avgt    5  0.010 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest    5000          random  avgt    5  0.009 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   10000         ordered  avgt    5  0.005 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   10000  almost ordered  avgt    5  0.005 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   10000        reversed  avgt    5  0.021 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   10000          random  avgt    5  0.021 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   50000         ordered  avgt    5  0.026 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   50000  almost ordered  avgt    5  0.026 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   50000        reversed  avgt    5  0.105 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest   50000          random  avgt    5  0.105 ±  0.001  ms/op
+BenchmarkInsertionSortTest.insertionSortTest  100000         ordered  avgt    5  0.054 ±  0.004  ms/op
+BenchmarkInsertionSortTest.insertionSortTest  100000  almost ordered  avgt    5  0.137 ±  0.004  ms/op
+BenchmarkInsertionSortTest.insertionSortTest  100000        reversed  avgt    5  0.214 ±  0.003  ms/op
+BenchmarkInsertionSortTest.insertionSortTest  100000          random  avgt    5  0.181 ±  0.002  ms/op
 
 Benchmark                             (k)          (type)  Mode  Cnt  Score    Error  Units
 BenchmarkShellSortTest.shellSortTest    2         ordered  avgt    5  0.179 ±  0.008  ms/op

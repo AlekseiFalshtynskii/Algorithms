@@ -15,6 +15,7 @@ public class Fibonacci {
 
     /**
      * Классическое вычисление
+     *
      * @return
      */
     private static BigInteger simple(int n) {
@@ -34,6 +35,7 @@ public class Fibonacci {
 
     /**
      * Матричное вычисление
+     *
      * @return
      */
     private static BigInteger matrix(int n) {

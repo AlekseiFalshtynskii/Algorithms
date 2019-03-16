@@ -43,7 +43,7 @@ public class IArray<T> {
 
             if (blockSize == _blockSize) {
                 OList.ListItem newBlock = addBlock(block);
-                copyPartBlock((BArray<T>) block.get(), (BArray<T>)newBlock.get(), index - (sumSize - blockSize));
+                copyPartBlock((BArray<T>) block.get(), (BArray<T>) newBlock.get(), index - (sumSize - blockSize));
             }
             addToBlock(block, index - (sumSize - blockSize), element);
         }

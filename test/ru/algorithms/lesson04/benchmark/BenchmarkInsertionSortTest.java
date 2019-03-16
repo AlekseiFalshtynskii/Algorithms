@@ -15,15 +15,18 @@ import static ru.algorithms.lesson04.benchmark.BenchmarkHelper.fillArray;
 @OutputTimeUnit(value = TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class BenchmarkInsertionSortTest {
-    private static final int SIZE = 10000;
 
     @Param({"ordered", "almost ordered", "reversed", "random"})
     private String type;
 
-    private int[] arr = new int[SIZE];
+    @Param({"1000", "5000", "10000", "50000", "100000"})
+    private int size;
+
+    private int[] arr;
 
     @Setup(Level.Trial)
     public void initArray() {
+        arr = new int[size];
         fillArray(arr, type);
     }
 
