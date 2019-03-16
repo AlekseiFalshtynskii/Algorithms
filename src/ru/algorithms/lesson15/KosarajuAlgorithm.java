@@ -6,20 +6,20 @@ import java.util.Arrays;
 
 import static java.util.Arrays.fill;
 
-public class AlgorithmKosaraju {
+public class KosarajuAlgorithm {
 
     /**
      * Граф на скриншоте (буквы заменены числами 0..7)
      */
-    private static final int[][] graph = new int[][]{
-            {1, -1, -1},
-            {2, 4, 5},
-            {3, -1, -1},
-            {2, 7, -1},
-            {0, 5, -1},
-            {6, -1, -1},
-            {5, -1, -1},
-            {3, 6, -1},
+    private static final Integer[][] graph = new Integer[][]{
+            {1, null, null},
+            {2,    4,    5},
+            {3, null, null},
+            {2,    7, null},
+            {0,    5, null},
+            {6, null, null},
+            {5, null, null},
+            {3,    6, null},
     };
 
     public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class AlgorithmKosaraju {
      * @param graph - матрица смежности
      * @return
      */
-    static Integer[] searchStronglyConnectedComponents(int[][] graph) {
+    static Integer[] searchStronglyConnectedComponents(Integer[][] graph) {
         boolean[] visited = new boolean[graph.length];
 
         BArray<Integer> order = new BArray<>(graph.length);
@@ -48,7 +48,7 @@ public class AlgorithmKosaraju {
         fill(visited, false);
 
         /* Реверсивный граф */
-        int[][] reversedGraph = reverseGraph(graph);
+        Integer[][] reversedGraph = reverseGraph(graph);
 
         while (order.size() != 0) {
             int v = order.remove(order.size() - 1);
@@ -62,16 +62,16 @@ public class AlgorithmKosaraju {
         return components.toArray(new Integer[]{});
     }
 
-    static int[][] reverseGraph(int[][] graph) {
-        int[][] reversed = new int[graph.length][graph[0].length];
-        for (int[] r : reversed) {
-            fill(r, -1);
+    static Integer[][] reverseGraph(Integer[][] graph) {
+        Integer[][] reversed = new Integer[graph.length][graph[0].length];
+        for (Integer[] r : reversed) {
+            fill(r, null);
         }
         int[] indexes = new int[graph.length];
         for (int i = 0; i < graph.length; i++) {
             for (int j = 0; j < graph[0].length; j++) {
-                int v = graph[i][j];
-                if (v == -1) {
+                Integer v = graph[i][j];
+                if (v == null) {
                     continue;
                 }
                 reversed[v][indexes[v]++] = i;
@@ -87,10 +87,10 @@ public class AlgorithmKosaraju {
      * @param graph
      * @param order
      */
-    static void dfs(int v, boolean[] visited, int[][] graph, BArray<Integer> order) {
+    static void dfs(int v, boolean[] visited, Integer[][] graph, BArray<Integer> order) {
         visited[v] = true;
         for (int j = 0; j < graph[v].length; j++) {
-            if (graph[v][j] != -1 && !visited[graph[v][j]]) {
+            if (graph[v][j] != null && !visited[graph[v][j]]) {
                 dfs(graph[v][j], visited, graph, order);
             }
         }
@@ -105,12 +105,12 @@ public class AlgorithmKosaraju {
      * @param components
      * @param component_index
      */
-    static void dfsReversed(int v, boolean[] visited, int[][] reversedGraph, BArray<Integer> components, int component_index) {
+    static void dfsReversed(int v, boolean[] visited, Integer[][] reversedGraph, BArray<Integer> components, int component_index) {
         visited[v] = true;
         components.add(v, component_index);
         System.out.print(v + " ");
         for (int j = 0; j < reversedGraph[v].length; j++) {
-            if (reversedGraph[v][j] != -1 && !visited[reversedGraph[v][j]]) {
+            if (reversedGraph[v][j] != null && !visited[reversedGraph[v][j]]) {
                 dfsReversed(reversedGraph[v][j], visited, reversedGraph, components, component_index);
             }
         }
