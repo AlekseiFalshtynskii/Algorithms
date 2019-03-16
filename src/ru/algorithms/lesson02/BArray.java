@@ -87,6 +87,11 @@ public class BArray<T> {
         return asList(_arr).toArray(a);
     }
 
+    public void clear() {
+        _arr = null;
+        _size = 0;
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(_arr);
