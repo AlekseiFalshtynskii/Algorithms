@@ -4,7 +4,7 @@ package ru.algorithms.lesson17;
  * Ребро графа
  */
 public class Edge implements Comparable<Edge> {
-    int u, v, w;
+    public int u, v, w;
 
     private Edge(int u, int v, int w) {
         this.u = u;
@@ -20,7 +20,7 @@ public class Edge implements Comparable<Edge> {
         return 0;
     }
 
-    static Edge of(int u, int v, int w) {
+    public static Edge of(int u, int v, int w) {
         return new Edge(u, v, w);
     }
 

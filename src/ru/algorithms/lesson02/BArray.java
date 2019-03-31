@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 
-public class BArray<T> {
+public class BArray<T> implements Cloneable {
     private Object[] _arr;
     private int _blockSize;
     private int _size = 0;
@@ -90,6 +90,11 @@ public class BArray<T> {
     public void clear() {
         _arr = null;
         _size = 0;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override
