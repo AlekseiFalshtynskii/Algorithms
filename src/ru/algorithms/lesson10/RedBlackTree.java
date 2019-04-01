@@ -109,23 +109,23 @@ public class RedBlackTree<Key extends Comparable<Key>> {
     private void rotateLeft(Node node) {
         if (node != null) {
             Node pivot = node.right;
-            if (node.parent == null) {
-                root = pivot;
+            node.right = pivot.left;
+            if (pivot.left != null) {
+                pivot.left.parent = node;
             }
             pivot.parent = node.parent;
-            if (node.parent != null) {
-                if (isLeft(node)) {
+
+            if (node.parent == null) {
+                root = pivot;
+            } else {
+                if (node.parent.left == node) {
                     node.parent.left = pivot;
                 } else {
                     node.parent.right = pivot;
                 }
             }
-            node.right = pivot.left;
-            if (pivot.left != null) {
-                pivot.left.parent = node;
-            }
-            node.parent = pivot;
             pivot.left = node;
+            node.parent = pivot;
         }
     }
 
@@ -137,23 +137,21 @@ public class RedBlackTree<Key extends Comparable<Key>> {
     private void rotateRight(Node node) {
         if (node != null) {
             Node pivot = node.left;
+            node.left = pivot.right;
+            if (pivot.right != null)
+                pivot.right.parent = node;
+            pivot.parent = node.parent;
+
             if (node.parent == null) {
                 root = pivot;
-            }
-            pivot.parent = node.parent;
-            if (node.parent != null) {
-                if (isLeft(node)) {
-                    node.parent.left = pivot;
-                } else {
+            } else {
+                if (node == node.parent.right)
                     node.parent.right = pivot;
-                }
+                else
+                    node.parent.left = pivot;
             }
-            node.left = pivot.right;
-            if (pivot.right != null) {
-                pivot.right.parent = node;
-            }
-            node.parent = pivot;
             pivot.right = node;
+            node.parent = pivot;
         }
     }
 
@@ -178,88 +176,133 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         if (node == null) {
             return;
         }
-        if (node.right != null && node.left != null) {
-            Node max = searchMax(node.left);
-            node.key = max.key;
-            node = max;
-        }
-        Node replacedNode = node.left != null ? node.left : node.right;
-        if (replacedNode != null) {
-            replaceNode(node, replacedNode);
-            node.left = node.right = node.parent = null;
-            if (node.color == BLACK) {
-                removeFixUp(replacedNode);
+        Node child, parent;
+        boolean color;
+        if (node.left != null && node.right != null) {
+            Node replace = node.right;
+            while (replace.left != null) {
+                replace = replace.left;
             }
-        } else if (node.parent == null) {
-            root = null;
-        } else {
-            if (node.color == BLACK) {
-                removeFixUp(node);
-            }
-            if (isLeft(node)) {
-                node.parent.left = null;
+            if (getParent(node) != null) {
+                if (isLeft(node)) {
+                    node.parent.left = replace;
+                } else {
+                    node.parent.right = replace;
+                }
             } else {
-                node.parent.right = null;
+                this.root = replace;
             }
-            node.parent = null;
+            child = replace.right;
+            parent = getParent(replace);
+            color = getColor(replace);
+            if (parent == node) {
+                parent = replace;
+            } else {
+                if (child != null) {
+                    child.parent = parent;
+                }
+                parent.left = child;
+                replace.right = node.right;
+                node.right.parent = replace;
+            }
+            replace.parent = node.parent;
+            replace.color = node.color;
+            replace.left = node.left;
+            node.left.parent = replace;
+            if (color == BLACK) {
+                removeFixUp(child, parent);
+            }
+            return;
+        }
+        if (node.left != null) {
+            child = node.left;
+        } else {
+            child = node.right;
+        }
+        parent = node.parent;
+        color = node.color;
+        if (child != null) {
+            child.parent = parent;
+        }
+        if (parent != null) {
+            if (parent.left == node) {
+                parent.left = child;
+            } else {
+                parent.right = child;
+            }
+        } else {
+            this.root = child;
+        }
+        if (color == BLACK) {
+            removeFixUp(child, parent);
         }
     }
 
-    private void removeFixUp(Node node) {
-        while (node != root && getColor(node) == BLACK) {
-            if (isLeft(node)) {
-                Node sibling = getRight(getParent(node));
-                if (getColor(sibling) == RED) {
-                    setColor(sibling, BLACK);
-                    setColor(getParent(node), RED);
-                    rotateLeft(getParent(node));
-                    sibling = getRight(getParent(node));
+    private void removeFixUp(Node node, Node parent) {
+        Node other;
+
+        while ((node == null || getColor(node) == BLACK) && (node != root)) {
+            if (parent.left == node) {
+                other = parent.right;
+                if (getColor(other) == RED) {
+                    setColor(other, BLACK);
+                    setColor(parent, RED);
+                    rotateLeft(parent);
+                    other = parent.right;
                 }
-                if (getColor(getLeft(sibling)) == BLACK && getColor(getRight(sibling))== BLACK) {
-                    setColor(getLeft(sibling), RED);
-                    node = getParent(node);
-                    continue;
-                } else if (getColor(getRight(sibling)) == BLACK) {
-                    setColor(getLeft(sibling), BLACK);
-                    setColor(sibling, RED);
-                    rotateRight(sibling);
-                    sibling = getRight(getParent(node));
-                }
-                if (getColor(getRight(sibling)) == RED) {
-                    setColor(sibling, getColor(getParent(node)));
-                    setColor(getParent(node), BLACK);
-                    setColor(getRight(sibling), BLACK);
-                    rotateLeft(getParent(node));
+
+                if ((other.left == null || getColor(other.left) == BLACK) &&
+                        (other.right == null || getColor(other.right) == BLACK)) {
+                    setColor(other, RED);
+                    node = parent;
+                    parent = getParent(node);
+                } else {
+                    if (other.right == null || getColor(other.right) == BLACK) {
+                        setColor(other.left, BLACK);
+                        setColor(other, RED);
+                        rotateRight(other);
+                        other = parent.right;
+                    }
+                    setColor(other, getColor(parent));
+                    setColor(parent, BLACK);
+                    setColor(other.right, BLACK);
+                    rotateLeft(parent);
                     node = root;
+                    break;
                 }
             } else {
-                Node sibling = getLeft(getParent(node));
-                if (getColor(sibling) == RED) {
-                    setColor(sibling, BLACK);
-                    setColor(getParent(node), RED);
-                    rotateRight(getParent(node));
-                    sibling = getLeft(getParent(node));
+                other = parent.left;
+                if (getColor(other) == RED) {
+                    setColor(other, BLACK);
+                    setColor(parent, RED);
+                    rotateRight(parent);
+                    other = parent.left;
                 }
-                if (getColor(getRight(sibling)) == BLACK && getColor(getLeft(sibling)) == BLACK) {
-                    setColor(sibling, RED);
-                    node = getParent(node);
-                    continue;
-                } else if (getColor(getLeft(sibling)) == BLACK) {
-                    setColor(getRight(sibling), BLACK);
-                    setColor(sibling, RED);
-                    rotateLeft(sibling);
-                    sibling = getLeft(getParent(node));
-                }
-                if (getColor(getLeft(sibling)) == RED) {
-                    setColor(sibling, getColor(getParent(node)));
-                    setColor(getParent(node), BLACK);
-                    setColor(getLeft(sibling), BLACK);
-                    rotateRight(getParent(node));
+
+                if ((other.left == null || getColor(other.left) == BLACK) &&
+                        (other.right == null || getColor(other.right) == BLACK)) {
+                    setColor(other, RED);
+                    node = parent;
+                    parent = getParent(node);
+                } else {
+                    if (other.left == null || getColor(other.left) == BLACK) {
+                        setColor(other.right, BLACK);
+                        setColor(other, RED);
+                        rotateLeft(other);
+                        other = parent.left;
+                    }
+                    setColor(other, getColor(parent));
+                    setColor(parent, BLACK);
+                    setColor(other.left, BLACK);
+                    rotateRight(parent);
                     node = root;
+                    break;
                 }
             }
         }
-        setColor(node, BLACK);
+        if (node != null) {
+            setColor(node, BLACK);
+        }
     }
 
     private boolean getColor(Node node) {
@@ -280,31 +323,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         return getParent(getParent(node));
     }
 
-    private Node getLeft(Node node) {
-        return node == null ? null : node.left;
-    }
-
-    private Node getRight(Node node) {
-        return node == null ? null : node.right;
-    }
-
-    /**
-     * Смена узлов местами
-     *
-     * @param target
-     * @param with
-     */
-    private void replaceNode(Node target, Node with) {
-        if (target.parent == null) {
-            root = with;
-        } else if (isLeft(target)) {
-            target.parent.left = with;
-        } else {
-            target.parent.right = with;
-        }
-        with.parent = target.parent;
-    }
-
     /**
      * Поиск узла по ключу
      *
@@ -323,19 +341,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             return search(key, node.left);
         }
         return search(key, node.right);
-    }
-
-    /**
-     * Поиск максимального узла в поддереве
-     *
-     * @param node
-     * @return
-     */
-    private Node searchMax(Node node) {
-        while (node.right != null) {
-            node = node.right;
-        }
-        return node;
     }
 
     void print() {

@@ -20,8 +20,8 @@ public class RedBlackTreeTest {
             tree.print();
         }
         key = keys.get(current().nextInt(keys.size()));
-        tree.remove(key);
         System.out.println("Removed key: " + key);
+        tree.remove(key);
         tree.print();
     }
 }
